@@ -1,3 +1,0 @@
-package dpdk
-
-import "C"
