@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-source dpdk.rc
+source hack/dpdk.rc
 
 echo "Install dependencies..."
 lsb_dist=''

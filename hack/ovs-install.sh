@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-source dpdk.rc
+source hack/dpdk.rc
 
 # download ovs
 curl -sSl http://openvswitch.org/releases/openvswitch-${OVS_VERSION}.tar.gz | tar -xz && mv openvswitch-${OVS_VERSION} ${OVS_DIR}

@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-source dpdk.rc
+source hack/dpdk.rc
 
 function stop() {
     # stop everything
@@ -12,7 +11,7 @@ function stop() {
     /bin/rm -f /var/run/openvswitch/*.pid
 }
 
-function init() {
+function init-dpdk() {
     # init hugepages
     # mount -t hugetlbfs -o pagesize=1G none /dev/hugepages
     # echo 512 > /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
@@ -40,7 +39,7 @@ function l2fw() {
     ./build/l2fwd -c3 -n1 -- -p 0x1 -T 1
 }
 
-func get-cpu-layout() {
+function get-cpu-layout() {
     ${RTE_SDK}/tools/cpu_layout.py
 }
 
@@ -49,7 +48,7 @@ function start-testpmd() {
     ${RTE_SDK}build/app/testpmd -c3 -n1 -- -i --portmask=0x1 -a --port-topology=chained
 }
 
-function start() {
+function start-ovs() {
     # start ovs
     mkdir -p /etc/openvswitch /var/log/openvswitch /var/run/openvswitch/
     ovsdb-tool create /etc/openvswitch/conf.db /usr/share/openvswitch/vswitch.ovsschema
@@ -67,17 +66,3 @@ function setup-bridge() {
     ovs-vsctl --no-wait --may-exist add-port ovsbr dpdk0 -- set Interface dpdk0 type=dpdk
     ovs-vsctl show
 }
-
-# vhostuser qemu
-# # This action creates a socket located at /usr/local/var/run/openvswitch/vhost-user-1
-# ovs-vsctl add-port br0 vhost-user-1 -- set Interface vhost-user-1 type=dpdkvhostuser
-# setup qemu
-#  The $q below is the number of queues.
-# The $v is the number of vectors, which is '$q x 2 + 2'.
-# -chardev socket,id=char2,path=/usr/local/var/run/openvswitch/vhost-user-2
-# -netdev type=vhost-user,id=mynet2,chardev=char2,vhostforce,queues=$q
-# -device virtio-net-pci,mac=00:00:00:00:00:02,netdev=mynet2,mq=on,vectors=$v
-# -object memory-backend-file,id=mem,size=4096M,mem-path=/dev/hugepages,
-# share=on
-# -numa node,memdev=mem -mem-prealloc
-# Exec `ethtool -L <DEV> combined <$q>` inside the VM
