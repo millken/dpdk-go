@@ -1,6 +1,9 @@
 package dpdk
 
 /*
+#cgo CFLAGS: -m64 -pthread -O3 -march=native -I/usr/local/include/dpdk
+#cgo LDFLAGS: -L/usr/lib -ldpdk -lz -lrt -lm -ldl -lfuse
+
 extern void go_usage_hook(char *prg);
 
 #include <rte_config.h>

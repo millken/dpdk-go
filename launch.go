@@ -1,11 +1,18 @@
 package dpdk
 
 /*
+#cgo CFLAGS: -m64 -pthread -O3 -march=native -I/usr/local/include/dpdk
+#cgo LDFLAGS: -L/usr/lib -ldpdk -lz -lrt -lm -ldl -lfuse
+
 extern int go_remote_launch(void *);
 extern int go_mp_remote_launch(void *);
-
+#include <stdlib.h>
+#include <limits.h>
 #include <rte_config.h>
+#include <rte_common.h>
 #include <rte_launch.h>
+#include <rte_lcore.h>
+#include <rte_per_lcore.h>
 */
 import "C"
 import "unsafe"
@@ -45,6 +52,12 @@ func RteEalRemoteLaunch(fn func(unsafe.Pointer) int, arg unsafe.Pointer, slave_i
 		arg, C.unsigned(slave_id)))
 }
 
+func RteEalLaunchAllSlave(fn func(unsafe.Pointer) int, arg unsafe.Pointer) {
+	for lcoreID := C.rte_get_next_lcore(C.UINT_MAX, 1, 0); lcoreID < C.RTE_MAX_LCORE; lcoreID = C.rte_get_next_lcore(C.uint(lcoreID), 1, 0) {
+		RteEalRemoteLaunch(fn, arg, uint(lcoreID))
+	}
+}
+
 func RteEalMpRemoteLaunch(fn func(unsafe.Pointer) int, arg unsafe.Pointer, call_master int) int {
 	lCoreFuncMp = fn
 	return int(C.rte_eal_mp_remote_launch((*C.lcore_function_t)(C.go_mp_remote_launch),
@@ -61,4 +74,8 @@ func RteEalWaitLCore(slave_id uint) int {
 
 func RteEalMpWaitLCore() {
 	C.rte_eal_mp_wait_lcore()
+}
+
+func RteLcoreID() uint {
+	return uint(C.rte_lcore_id())
 }
