@@ -1,4 +1,4 @@
-Go bindings for [dpdk](http://dpdk.org/).
+# Go bindings for [dpdk](http://dpdk.org/)
 
 ## Install dpdk-go
 
