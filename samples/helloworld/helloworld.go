@@ -23,10 +23,10 @@ func main() {
 
 	log.Println("rte inited.")
 
-	// call lcore_hello() on every slave lcore
+	// call helloworld() on every slave lcore
 	dpdk.RteEalLaunchAllSlave(helloworld, unsafe.Pointer(nil))
 
-	//call it on master lcore too
+	// call helloworld on master lcore too
 	helloworld(unsafe.Pointer(nil))
 
 	dpdk.RteEalMpWaitLCore()
