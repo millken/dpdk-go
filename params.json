@@ -1,0 +1,6 @@
+{
+  "name": "Dpdk-go",
+  "tagline": "Go bindings for [dpdk](http://dpdk.org/)",
+  "body": "# Go bindings for [dpdk](http://dpdk.org/)\r\n\r\n## Install dpdk-go\r\n\r\n- Install dpdk by `hack/dpdk-install.sh`\r\n- `go get -u github.com/feiskyer/dpdk-go`\r\n\r\nIf dpdk is installed inside a virtual machine, (e.g. VMWARE), then patch `hack/vmware.diff` must be applied before compling the dpdk source.\r\n\r\n## Sample Applications\r\n\r\n### [Helloworld](http://dpdk.org/doc/guides/sample_app_ug/hello_world.html)\r\n\r\n```\r\n$ go get -u github.com/feiskyer/dpdk-go/samples/helloworld\r\n$ helloworld -c3 -n1\r\n```\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
