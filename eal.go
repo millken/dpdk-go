@@ -2,13 +2,20 @@ package dpdk
 
 /*
 #cgo CFLAGS: -m64 -pthread -O3 -march=native -I/usr/local/include/dpdk
-#cgo LDFLAGS: -L/usr/lib -ldpdk -lz -lrt -lm -ldl -lfuse
+#cgo LDFLAGS: -L/usr/local/lib -ldpdk -lz -lrt -lm -ldl -lfuse
 
 extern void go_usage_hook(char *prg);
 
 #include <rte_config.h>
 #include <rte_common.h>
 #include <rte_eal.h>
+
+typedef const char* const_char_ptr;
+
+inline void rte_eal_exit(int exit_code)
+{
+	rte_exit(exit_code, "Error with EAL initialization");
+}
 */
 import "C"
 import "unsafe"
@@ -77,6 +84,10 @@ func RteSysGetTid() int {
 
 func RteGetTid() int {
 	return int(C.rte_gettid())
+}
+
+func RteExit(exitCode int) {
+	C.rte_eal_exit(C.int(exitCode))
 }
 
 var applicationUsageHook func(string)

@@ -2,7 +2,7 @@ package dpdk
 
 /*
 #cgo CFLAGS: -m64 -pthread -O3 -march=native -I/usr/local/include/dpdk
-#cgo LDFLAGS: -L/usr/lib -ldpdk -lz -lrt -lm -ldl -lfuse
+#cgo LDFLAGS: -L/usr/local/lib -ldpdk -lz -lrt -lm -ldl -lfuse
 
 #include <rte_config.h>
 #include <rte_malloc.h>
@@ -19,6 +19,10 @@ func GetCArray(n uint) *unsafe.Pointer {
 
 func SliceFromCArray(arr *unsafe.Pointer, n uint) []unsafe.Pointer {
 	return (*[1 << 30](unsafe.Pointer))(unsafe.Pointer(arr))[:n:n]
+}
+
+func ElemFromCArray(arr *unsafe.Pointer, n uint) unsafe.Pointer {
+	return (*[1 << 30](unsafe.Pointer))(unsafe.Pointer(arr))[n-1 : n][0]
 }
 
 func StrError(errno int) string {

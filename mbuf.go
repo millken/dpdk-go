@@ -2,7 +2,7 @@ package dpdk
 
 /*
 #cgo CFLAGS: -m64 -pthread -O3 -march=native -I/usr/local/include/dpdk
-#cgo LDFLAGS: -L/usr/lib -ldpdk -lz -lrt -lm -ldl -lfuse
+#cgo LDFLAGS: -L/usr/local/lib -ldpdk -lz -lrt -lm -ldl -lfuse
 
 #include <rte_config.h>
 #include <rte_mbuf.h>
@@ -87,6 +87,7 @@ const (
 	RTE_PTYPE_INNER_L4_MASK             = uint64(C.RTE_PTYPE_INNER_L4_MASK)
 	RTE_MBUF_PRIV_ALIGN                 = uint64(C.RTE_MBUF_PRIV_ALIGN)
 	RTE_MBUF_DEFAULT_DATAROOM           = uint64(C.RTE_MBUF_DEFAULT_DATAROOM)
+	RTE_MBUF_DEFAULT_BUF_SIZE           = uint(C.RTE_MBUF_DEFAULT_BUF_SIZE)
 )
 
 type RteMbuf C.struct_rte_mbuf
@@ -97,4 +98,8 @@ func RtePktMbufPoolCreate(name string, n, cache_size, priv_size,
 	return (*RteMemPool)(C.rte_pktmbuf_pool_create(C.CString(name),
 		C.unsigned(n), C.unsigned(cache_size), C.uint16_t(priv_size),
 		C.uint16_t(data_room_size), C.int(socket_id)))
+}
+
+func RtePktMbufFree(buf *RteMbuf) {
+	C.rte_pktmbuf_free(buf)
 }

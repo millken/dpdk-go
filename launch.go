@@ -2,7 +2,7 @@ package dpdk
 
 /*
 #cgo CFLAGS: -m64 -pthread -O3 -march=native -I/usr/local/include/dpdk
-#cgo LDFLAGS: -L/usr/lib -ldpdk -lz -lrt -lm -ldl -lfuse
+#cgo LDFLAGS: -L/usr/local/lib -ldpdk -lz -lrt -lm -ldl -lfuse
 
 extern int go_remote_launch(void *);
 extern int go_mp_remote_launch(void *);
@@ -70,6 +70,10 @@ func RteEalGetLCoreState(slave_id uint) int {
 
 func RteEalWaitLCore(slave_id uint) int {
 	return int(C.rte_eal_wait_lcore(C.unsigned(slave_id)))
+}
+
+func RteSocketID() int {
+	return int(C.rte_socket_id())
 }
 
 func RteEalMpWaitLCore() {

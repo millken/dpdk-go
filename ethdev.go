@@ -2,7 +2,7 @@ package dpdk
 
 /*
 #cgo CFLAGS: -m64 -pthread -O3 -march=native -I/usr/local/include/dpdk
-#cgo LDFLAGS: -L/usr/lib -ldpdk -lz -lrt -lm -ldl -lfuse
+#cgo LDFLAGS: -L/usr/local/lib -ldpdk -lz -lrt -lm -ldl -lfuse
 
 #include <rte_config.h>
 #include <rte_ethdev.h>
@@ -168,6 +168,7 @@ type RteEthXStats C.struct_rte_eth_xstats
 type RteEthDcbTcQueueMapping C.struct_rte_eth_dcb_tc_queue_mapping
 type RteEthDcbInfo C.struct_rte_eth_dcb_info
 
+//
 func RteEthDevCount() uint {
 	return uint(C.rte_eth_dev_count())
 }
@@ -252,4 +253,8 @@ func RteEthRxQueueDescriptorDone(port_id, queue_id, offset uint) uint {
 func RteEthTxBurst(port_id, queue_id uint, tx_pkts *unsafe.Pointer, nb_pkts uint) uint {
 	return uint(C.rte_eth_tx_burst(C.uint8_t(port_id), C.uint16_t(queue_id),
 		(**C.struct_rte_mbuf)(unsafe.Pointer(tx_pkts)), C.uint16_t(nb_pkts)))
+}
+
+func RteEthDevSocketID(port_id uint) uint {
+	return uint(C.rte_eth_dev_socket_id(C.uint8_t(port_id)))
 }

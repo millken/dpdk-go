@@ -28,3 +28,12 @@ Notes: If dpdk is installed inside a virtual machine, (e.g. VMWARE), then patch 
 $ go get -u github.com/feiskyer/dpdk-go/samples/helloworld
 $ helloworld -c3 -n1
 ```
+
+### [skeleton](http://dpdk.org/doc/guides/sample_app_ug/skeleton.html)
+
+A simple skeleton example of a forwarding application.
+
+```
+$ go get -u github.com/feiskyer/dpdk-go/samples/skeleton
+$ skeleton -c3 -n1
+```
