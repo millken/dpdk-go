@@ -30,17 +30,22 @@ type Params struct {
  */
 func loop(arg unsafe.Pointer) int {
 	params := (*Params)(arg)
-	bufs := dpdk.GetCArray(uint(BURST_SIZE))
+	var bufs [BURST_SIZE]*dpdk.RteMbuf
 
 	for {
 		// Get burst of RX packets
-		nb_rx := dpdk.RteEthRxBurst(params.portId, 0, bufs, BURST_SIZE)
+		nb_rx := dpdk.RteEthRxBurst(params.portId, 0, (*unsafe.Pointer)(unsafe.Pointer(&bufs[0])), BURST_SIZE)
+		// Print the buf content, just for debug
+		for i := uint(0); i < nb_rx; i++ {
+			log.Println(*bufs[i])
+		}
+
 		// Send burst of TX packets
-		nb_tx := dpdk.RteEthTxBurst(params.portId^1, 0, bufs, nb_rx)
+		nb_tx := dpdk.RteEthTxBurst(params.portId^1, 0, (*unsafe.Pointer)(unsafe.Pointer(&bufs[0])), nb_rx)
 		// Free any unsent packets
 		if nb_tx < nb_rx {
-			for buf := nb_tx; buf < nb_rx; buf++ {
-				dpdk.RtePktMbufFree(((*dpdk.RteMbuf)(dpdk.ElemFromCArray(bufs, buf))))
+			for i := nb_tx; i < nb_rx; i++ {
+				dpdk.RtePktMbufFree(bufs[i])
 			}
 		}
 	}
@@ -103,6 +108,9 @@ func main() {
 		if ret < 0 {
 			log.Fatalln("Failed to setup tx queue")
 		}
+
+		macAddr := dpdk.RteEthMacAddr(portId)
+		log.Println("Port ", portId, " 's mac address is ", macAddr)
 
 		// Start the Ethernet port
 		ret = dpdk.RteEthDevStart(portId)
