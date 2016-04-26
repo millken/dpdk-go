@@ -49,7 +49,6 @@ func loop(arg unsafe.Pointer) int {
 			}
 		}
 	}
-	return 0
 }
 
 func main() {

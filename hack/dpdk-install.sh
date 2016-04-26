@@ -30,7 +30,7 @@ fi
 lsb_dist="$(echo "$lsb_dist" | tr '[:upper:]' '[:lower:]')"
 case "$lsb_dist" in
 	ubuntu|debian)
-	apt-get install -y vim gcc-multilib libfuse-dev linux-source libssl-dev llvm-dev python autoconf libtool libpciaccess-dev make libcunit1-dev libaio-dev
+	apt-get install -y gcc-multilib libfuse-dev linux-source libssl-dev llvm-dev python autoconf libtool libpciaccess-dev make libcunit1-dev libaio-dev
 	;;
 
 	fedora|centos|oraclelinux|redhat)

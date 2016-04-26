@@ -1,0 +1,21 @@
+sudo: required
+dist: trusty
+
+language: go
+
+matrix:
+  include:
+  - go: 1.6
+  - go: 1.5
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y gcc-multilib libfuse-dev linux-source libssl-dev llvm-dev python autoconf libtool libpciaccess-dev make libcunit1-dev libaio-dev -qq
+
+script:
+  - hack/verify-gofmt.sh
+  - hack/verify-govet.sh
+
+notifications:
+  slack:
+    secure: heLf6sqrq6EHSf+J1PAvZPIfiy3209aUD3dzdHkus2LfHiEADS8Uplh4Tkfvn4gWJyZCWqfGxe4FsYEe8SFUeAuyzDdTKBePyMUoRfpQMcpjK2lbW7HoGhRX0SlSmyFoZi4UCgPCj/EeYft/MKUdnrGzkGQNcrBnz3IKzFUrC6cw1W1kMFEFnHIrJK5W6zZVFNU3E9TFsjLQeR6iyFwNx8iqyU/7sXntYdq4jW7UAOofYT1xqQ0M9e2SjT0joRp/W8hv5KNSNZThxfo87QNxZolZFwYLPr8JzLUebEQvQqvgfTeLcVqZFNHEcYAg76fdJHjHqnZVsFzE9W3KZu5GklLtM8hsG5QB0UDR9kjRnyAvN5AMIkqJiOtthl9aHpgJ5O3SzdfLg3wqJi56SgDflVYiDEHkFc+ilEA5yxxVb8l7QtX/L0y0iD7GurwveVoJRTXgOk0PehjALE62L9BO0wL0u4JH589unVCZSaB33zjX/VwAkFoizNV/rsdi9pOqfriHUfz2Zqsd8Kv8k6QG1rQ9oEfr8boHKws/+691lbed+qjpc2snGxDVyT935BBV2FSVjefpySRKtdxeNhc3j3/5gW2x3z0KqzMs6vfIFkbZvHXX4cbaP2iKf7pxdWeG1kfKcR6o9bpNkmm0F5s5pLQ0+wYCoL6PuYs6KLwb9wA=

@@ -72,6 +72,17 @@ func RteEalWaitLCore(slave_id uint) int {
 	return int(C.rte_eal_wait_lcore(C.unsigned(slave_id)))
 }
 
+func RteEalWaitAllSlave() int {
+	for lcoreID := C.rte_get_next_lcore(C.UINT_MAX, 1, 0); lcoreID < C.RTE_MAX_LCORE; lcoreID = C.rte_get_next_lcore(C.uint(lcoreID), 1, 0) {
+		ret := RteEalWaitLCore(uint(lcoreID))
+		if ret < 0 {
+			return ret
+		}
+	}
+
+	return 0
+}
+
 func RteSocketID() int {
 	return int(C.rte_socket_id())
 }
