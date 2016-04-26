@@ -8,6 +8,7 @@ package dpdk
 #include <rte_mbuf.h>
 */
 import "C"
+import "unsafe"
 
 const (
 	PKT_RX_VLAN_PKT                     = uint64(C.PKT_RX_VLAN_PKT)
