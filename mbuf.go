@@ -101,5 +101,5 @@ func RtePktMbufPoolCreate(name string, n, cache_size, priv_size,
 }
 
 func RtePktMbufFree(buf *RteMbuf) {
-	C.rte_pktmbuf_free(buf)
+	C.rte_pktmbuf_free((*C.struct_rte_mbuf)(unsafe.Pointer(buf)))
 }
