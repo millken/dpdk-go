@@ -9,13 +9,9 @@ extern void go_usage_hook(char *prg);
 #include <rte_config.h>
 #include <rte_common.h>
 #include <rte_eal.h>
+#include "wrap.h"
 
 typedef const char* const_char_ptr;
-
-inline void rte_eal_exit(int exit_code)
-{
-	rte_exit(exit_code, "Error with EAL initialization");
-}
 */
 import "C"
 import "unsafe"
