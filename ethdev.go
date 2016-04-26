@@ -10,6 +10,7 @@ package dpdk
 import "C"
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -167,6 +168,7 @@ type RteEthTxqInfo C.struct_rte_eth_txq_info
 type RteEthXStats C.struct_rte_eth_xstats
 type RteEthDcbTcQueueMapping C.struct_rte_eth_dcb_tc_queue_mapping
 type RteEthDcbInfo C.struct_rte_eth_dcb_info
+type RteEthAddr C.struct_ether_addr
 
 //
 func RteEthDevCount() uint {
@@ -257,4 +259,10 @@ func RteEthTxBurst(port_id, queue_id uint, tx_pkts *unsafe.Pointer, nb_pkts uint
 
 func RteEthDevSocketID(port_id uint) uint {
 	return uint(C.rte_eth_dev_socket_id(C.uint8_t(port_id)))
+}
+
+func RteEthMacAddr(port_id uint) string {
+	var addr C.struct_ether_addr
+	C.rte_eth_macaddr_get(C.uint8_t(port_id), &addr)
+	return fmt.Sprintf("%02x:%02x:%02x:%02x:%02x:%02x", addr.addr_bytes[0], addr.addr_bytes[1], addr.addr_bytes[2], addr.addr_bytes[3], addr.addr_bytes[4], addr.addr_bytes[5])
 }

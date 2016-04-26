@@ -24,3 +24,5 @@ _testmain.go
 *.prof
 .vscode
 *.iml
+
+sftp-config.json

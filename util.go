@@ -22,7 +22,7 @@ func SliceFromCArray(arr *unsafe.Pointer, n uint) []unsafe.Pointer {
 }
 
 func ElemFromCArray(arr *unsafe.Pointer, n uint) unsafe.Pointer {
-	return (*[1 << 30](unsafe.Pointer))(unsafe.Pointer(arr))[n-1 : n][0]
+	return (*[1 << 30](unsafe.Pointer))(unsafe.Pointer(arr))[n]
 }
 
 func StrError(errno int) string {
