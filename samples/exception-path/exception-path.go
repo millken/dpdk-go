@@ -38,14 +38,6 @@ const struct rte_eth_conf port_conf = {
 		.mq_mode = ETH_MQ_TX_NONE,
 	},
 };
-
-void* get_pkt_data(struct rte_mbuf *m) {
-	return rte_pktmbuf_mtod(m, void*);
-}
-
-uint16_t get_pkt_data_len(struct rte_mbuf *m) {
-	return rte_pktmbuf_data_len(m);
-}
 */
 import "C"
 
@@ -62,6 +54,8 @@ const (
 	iffOneQueue   = C.IFF_ONE_QUEUE
 	iffNoPI       = C.IFF_NO_PI
 )
+
+var mbufPool *dpdk.RteMemPool
 
 type Params struct {
 	InputMask  uint
@@ -109,20 +103,23 @@ func loop(arg unsafe.Pointer) int {
 
 		for {
 			// Get burst of RX packets
-			nb_rx := dpdk.RteEthRxBurst(0, 0, (*unsafe.Pointer)(unsafe.Pointer(&bufs[0])), BURST_SIZE)
+			numRx := dpdk.RteEthRxBurst(0, 0, (*unsafe.Pointer)(unsafe.Pointer(&bufs[0])), BURST_SIZE)
 			// Print the buf content, just for debug
-			for i := uint(0); i < nb_rx; i++ {
-				m := (*C.struct_rte_mbuf)(unsafe.Pointer(bufs[i]))
-				data := C.get_pkt_data(m)
-				dataLen := int(C.get_pkt_data_len(m))
+			for i := uint(0); i < numRx; i++ {
+				// m := (*C.struct_rte_mbuf)(unsafe.Pointer(bufs[i]))
+				// data := C.get_pkt_data(m)
+				data := dpdk.RtePktMbufMtoD(bufs[i])
+				// dataLen := int(C.get_pkt_data_len(m))
+				dataLen := dpdk.RtePktMbufDataLen(bufs[i])
 
-				wnb, err := tapFile.Write((*[1 << 30]byte)(unsafe.Pointer(data))[:dataLen:dataLen])
+				wnb, err := tapFile.Write((*[1 << 30]byte)(data)[:dataLen:dataLen])
 				if err != nil {
 					log.Println("Write data failed: ", err)
 				}
 
-				if wnb < dataLen {
-					for i := wnb; i < dataLen; i++ {
+				wn := uint16(wnb)
+				if wn < dataLen {
+					for i := wn; i < dataLen; i++ {
 						dpdk.RtePktMbufFree(bufs[i])
 					}
 				}
@@ -131,17 +128,31 @@ func loop(arg unsafe.Pointer) int {
 	} else if ((uint(1) << lcoreID) & params.OutputMask) != 0 {
 		fmt.Println("Lcore", lcoreID, "is reading from", tapName, "and writing to port 0")
 
-		// TODO: read from tap adn writing to port 0
-		// for {
-		// 	// Send burst of TX packets
-		// 	nb_tx := dpdk.RteEthTxBurst(params.portId^1, 0, (*unsafe.Pointer)(unsafe.Pointer(&bufs[0])), nb_rx)
-		// 	// Free any unsent packets
-		// 	if nb_tx < nb_rx {
-		// 		for i := nb_tx; i < nb_rx; i++ {
-		// 			dpdk.RtePktMbufFree(bufs[i])
-		// 		}
-		// 	}
-		// }
+		for {
+			m := dpdk.RtePktMbufAlloc(mbufPool)
+			data := dpdk.RtePktMbufMtoD(m)
+			if m == nil {
+				continue
+			}
+
+			bytes := (*[1 << 30]byte)(data)[:2048:2048]
+			rnb, err := tapFile.Read(bytes)
+			if err != nil {
+				log.Println("Read from tap failed:", err)
+				continue
+			}
+
+			mbuf := (*C.struct_rte_mbuf)(unsafe.Pointer(m))
+			mbuf.nb_segs = 1
+			mbuf.next = nil
+			mbuf.pkt_len = C.uint32_t(rnb)
+			mbuf.data_len = C.uint16_t(rnb)
+
+			numTx := dpdk.RteEthTxBurst(0, 0, (*unsafe.Pointer)(unsafe.Pointer(&m)), 1)
+			if numTx < 1 {
+				dpdk.RtePktMbufFree(m)
+			}
+		}
 	} else {
 		log.Println("Lcore", lcoreID, "has nothing to do")
 	}
@@ -166,7 +177,7 @@ func main() {
 		log.Fatalln("Error: number of ports must be > 2")
 	}
 
-	mbufPool := dpdk.RtePktMbufPoolCreate(
+	mbufPool = dpdk.RtePktMbufPoolCreate(
 		"MBUF_POOL",
 		nbPorts*NUM_MBUFS,
 		MBUF_CACHE_SIZE,
