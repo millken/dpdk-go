@@ -3,8 +3,8 @@ export OVS_DIR="/usr/src/ovs"
 export OVS_INSTALL_DIR="/usr"
 export RTE_SDK="/usr/src/dpdk"
 
-export DPDK_VERSION="2.2.0"
-export OVS_VERSION="2.5.0"
+export DPDK_VERSION="16.04"
+export OVS_VERSION="master" # requires DPDK 2.2.0
 export RTE_TARGET="x86_64-native-linuxapp-gcc"
 # export RTE_TARGET="x86_64-ivshmem-linuxapp-gcc"
 

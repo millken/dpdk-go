@@ -1,3 +1,5 @@
+// +build dpdk_v2
+
 package dpdk
 
 /*
@@ -17,20 +19,14 @@ import (
 /* Macros */
 const (
 	ETH_LINK_SPEED_AUTONEG          = int(C.ETH_LINK_SPEED_AUTONEG)
-	ETH_LINK_SPEED_10M_HD           = int(C.ETH_LINK_SPEED_10M_HD)
-	ETH_LINK_SPEED_10M              = int(C.ETH_LINK_SPEED_10M)
-	ETH_LINK_SPEED_100M_HD          = int(C.ETH_LINK_SPEED_100M_HD)
-	ETH_LINK_SPEED_100M             = int(C.ETH_LINK_SPEED_100M)
-	ETH_LINK_SPEED_1G               = int(C.ETH_LINK_SPEED_1G)
-	ETH_LINK_SPEED_2_5G             = int(C.ETH_LINK_SPEED_2_5G)
-	ETH_LINK_SPEED_5G               = int(C.ETH_LINK_SPEED_5G)
+	ETH_LINK_SPEED_10               = int(C.ETH_LINK_SPEED_10)
+	ETH_LINK_SPEED_100              = int(C.ETH_LINK_SPEED_100)
+	ETH_LINK_SPEED_1000             = int(C.ETH_LINK_SPEED_1000)
+	ETH_LINK_SPEED_10000            = int(C.ETH_LINK_SPEED_10000)
 	ETH_LINK_SPEED_10G              = int(C.ETH_LINK_SPEED_10G)
 	ETH_LINK_SPEED_20G              = int(C.ETH_LINK_SPEED_20G)
-	ETH_LINK_SPEED_25G              = int(C.ETH_LINK_SPEED_25G)
 	ETH_LINK_SPEED_40G              = int(C.ETH_LINK_SPEED_40G)
-	ETH_LINK_SPEED_50G              = int(C.ETH_LINK_SPEED_50G)
-	ETH_LINK_SPEED_56G              = int(C.ETH_LINK_SPEED_56G)
-	ETH_LINK_SPEED_100G             = int(C.ETH_LINK_SPEED_100G)
+	ETH_LINK_AUTONEG_DUPLEX         = int(C.ETH_LINK_AUTONEG_DUPLEX)
 	ETH_LINK_HALF_DUPLEX            = int(C.ETH_LINK_HALF_DUPLEX)
 	ETH_LINK_FULL_DUPLEX            = int(C.ETH_LINK_FULL_DUPLEX)
 	ETH_MQ_RX_RSS_FLAG              = int(C.ETH_MQ_RX_RSS_FLAG)

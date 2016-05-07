@@ -37,3 +37,18 @@ A simple skeleton example of a forwarding application.
 $ go get -u github.com/feiskyer/dpdk-go/samples/skeleton
 $ skeleton -c3 -n1
 ```
+
+### [Exception Path](http://dpdk.org/doc/guides/sample_app_ug/exception_path.html)
+
+Reads packets from `dpdk port 0`, and then write the data to `tap_dpdk_00`:
+
+```sh
+$ go get -u github.com/feiskyer/dpdk-go/samples/exception-path
+$ exception-path
+```
+
+Open another termial, and run 
+
+```sh
+$ tcpdump -nn -i tap_dpdk_00
+```
